@@ -5,7 +5,7 @@ Josh Wardle's *Wordle* written in Python. Runs in the command line. The code is 
 The dictionary file used contains come very interesting 5-letter words... Vimpa, anyone?
 
 All credit to Josh Wardle.
-> www.powerlanguage.co.uk/Wordle
+> www.powerlanguage.co.uk/wordle
 >
 > github.com/powerlanguage
 
