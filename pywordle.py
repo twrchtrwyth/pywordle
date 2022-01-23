@@ -111,16 +111,22 @@ def main():
                     elif letter_count > 1:
                         if guess.count(letter) < letter_count:
                             for i in range(letter_count):
-                                if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    if guess.index(letter) < 4:
-                                        starting_index_guess = guess.index(letter) + 1
-                                elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    if guess.index(letter) < 4:
-                                        starting_index_guess = guess.index(letter) + 1
+                                try:
+                                    if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
+                                        formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
+                                        starting_index_word = word_to_guess.index(letter) + 1
+                                        if guess.index(letter) < 4:
+                                            starting_index_guess = guess.index(letter) + 1
+                                    elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
+                                        formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
+                                        starting_index_word = word_to_guess.index(letter) + 1
+                                        if guess.index(letter) < 4:
+                                            starting_index_guess = guess.index(letter) + 1
+                                except ValueError:
+                                    print(f"{letter} {starting_index_word}")
+                                    print(starting_index_guess)
+                                    print("Oops value error.")
+                                    pass
                         elif guess.count(letter) == letter_count:
                             if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
                                 formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
