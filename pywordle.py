@@ -57,6 +57,19 @@ def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
         formatted_guess[guess.index(letter)] = letter.lower()
 
 
+def multi_letter(letter, word, guess, formatted_guess, index_1, index_2):
+    if word.index(letter, index_1) == guess.index(letter, index_2):
+        formatted_guess[guess.index(letter, index_2)] = letter.upper()
+        index_2 = word.index(letter) + 1
+        if guess.index(letter) < 4:
+            index_2 = guess.index(letter) + 1
+    elif word.index(letter, index_1) != guess.index(letter, index_2):
+        formatted_guess[guess.index(letter, index_2)] = letter.lower()
+        index_1 = word.index(letter) + 1
+        if guess.index(letter) < 4:
+            index_2 = guess.index(letter) + 1
+
+
 def main():
     dictionary = load_dictionary()
     word_list = create_word_list(dictionary)
@@ -102,7 +115,6 @@ def main():
                             right_letter(letter, word_to_guess, guess, formatted_guess)
                         elif guess.count(letter) > letter_count:
                             times_recurred += 1
-                            print(times_recurred)
                             if times_recurred == 1:
                                 right_letter(letter, word_to_guess, guess, formatted_guess)
                             elif times_recurred > 1:
@@ -112,52 +124,29 @@ def main():
                         if guess.count(letter) < letter_count:
                             for i in range(letter_count):
                                 try:
-                                    if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
-                                        formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
-                                        starting_index_word = word_to_guess.index(letter) + 1
-                                        if guess.index(letter) < 4:
-                                            starting_index_guess = guess.index(letter) + 1
-                                    elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
-                                        formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
-                                        starting_index_word = word_to_guess.index(letter) + 1
-                                        if guess.index(letter) < 4:
-                                            starting_index_guess = guess.index(letter) + 1
+                                    multi_letter(
+                                        letter,
+                                        word_to_guess,
+                                        guess,
+                                        formatted_guess,
+                                        index_1=starting_index_word,
+                                        index_2=starting_index_guess
+                                    )
                                 except ValueError:
-                                    print(f"{letter} {starting_index_word}")
-                                    print(starting_index_guess)
-                                    print("Oops value error.")
                                     pass
-                        elif guess.count(letter) == letter_count:
-                            if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
-                                formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
-                                starting_index_word = word_to_guess.index(letter) + 1
-                                starting_index_guess = guess.index(letter) + 1
-                            elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
-                                formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
-                                starting_index_word = word_to_guess.index(letter) + 1
-                                starting_index_guess = guess.index(letter) + 1
-                        elif guess.count(letter) > letter_count:
-                            times_recurred += 1
-                            print(times_recurred)
-                            if times_recurred == 1:
-                                if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    starting_index_guess = guess.index(letter) + 1
-                                elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    starting_index_guess = guess.index(letter) + 1
-                            elif times_recurred > 1:
+                        elif guess.count(letter) >= letter_count:
+                            multi_letter(
+                                letter,
+                                word_to_guess,
+                                guess,
+                                formatted_guess,
+                                index_1=starting_index_word,
+                                index_2=starting_index_guess
+                            )
+                            if guess.count(letter) > letter_count:
+                                times_recurred += 1
+                            if times_recurred > 1:
                                 index_nudge = guess.index(letter) + 1
-                                if word_to_guess.index(letter, starting_index_word) == guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.upper()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    starting_index_guess = guess.index(letter) + 1
-                                elif word_to_guess.index(letter, starting_index_word) != guess.index(letter, starting_index_guess):
-                                    formatted_guess[guess.index(letter, starting_index_guess)] = letter.lower()
-                                    starting_index_word = word_to_guess.index(letter) + 1
-                                    starting_index_guess = guess.index(letter) + 1
                 num_guesses += 1
                 starting_index_word = 0
                 starting_index_guess = 0
@@ -175,7 +164,7 @@ def main():
         if play_again.lower() == "y":
             pass
         elif play_again.lower() == "n":
-            print("Hwyl fawr.")
+            print("Hwyl fawr, diolch am chwarae.")
             break
         else:
             print("I'll take that as a yes.")
