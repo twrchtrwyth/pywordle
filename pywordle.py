@@ -50,10 +50,10 @@ def wrong_letter(letter, guess, formatted_guess, index=0):
     formatted_guess[guess.index(letter, index)] = f"-{letter}-"
 
 
-def right_letter(letter, guess, formatted_guess, index_1=0, index_2=0):
-    if word_to_guess.index(letter, index_1) == guess.index(letter, index_2):
+def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
+    if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter)] = letter.upper()
-    elif word_to_guess.index(letter, index_1) != guess.index(letter, index_2):
+    elif word.index(letter, index_1) != guess.index(letter, index_2):
         formatted_guess[guess.index(letter)] = letter.lower()
 
 
@@ -99,12 +99,12 @@ def main():
                                 wrong_letter(letter, guess, formatted_guess, index=index_nudge)
                     elif letter_count == 1:
                         if guess.count(letter) == letter_count:
-                            right_letter(letter, guess, formatted_guess)
+                            right_letter(letter, word_to_guess, guess, formatted_guess)
                         elif guess.count(letter) > letter_count:
                             times_recurred += 1
                             print(times_recurred)
                             if times_recurred == 1:
-                                right_letter(letter, guess, formatted_guess)
+                                right_letter(letter, word_to_guess, guess, formatted_guess)
                             elif times_recurred > 1:
                                 index_nudge = guess.index(letter) + 1
                                 wrong_letter(letter, guess, formatted_guess, index=index_nudge)
