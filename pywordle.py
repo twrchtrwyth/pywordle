@@ -2,8 +2,8 @@ import random
 import json
 
 
-# TODO:
-# Handle single letters in guesses when there are multiple in the word.
+# TODO: Doesn't properly handle more than one repeat letter in guess.
+
 intro_message = """
 ###########################################################
 Welcome to Wordle, Python-style!
@@ -73,8 +73,9 @@ def multi_letter(letter, word, guess, formatted_guess, index_1, index_2):
 def main():
     dictionary = load_dictionary()
     word_list = create_word_list(dictionary)
+    game_loop(word_list)
 
-
+def game_loop(word_list):
     while True:
         formatted_guess = []
         num_guesses = 0
