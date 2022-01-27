@@ -24,12 +24,17 @@ github.com/powerlanguage
 """
 
 def load_dictionary():
+    """Opens the dictionary file used for the game.
+    """
     with open("words_dictionary.json") as f:
         word_dictionary = json.load(f)
         return word_dictionary
 
 
 def create_word_list(word_dictionary):
+    """Selects all 5-letter words from the loaded dictionary, and stores
+    them in a list.
+    """
     word_list = []
     for word in word_dictionary.keys():
         if len(word) == 5:
@@ -41,16 +46,24 @@ def create_word_list(word_dictionary):
 
 
 def pick_random_word(word_list):
+    """Picks a random word from the list of 5-letter words.
+    """
     random_index = random.randint(0, len(word_list) - 1)
     word_to_guess = word_list[random_index]
     return word_to_guess
 
 
 def wrong_letter(letter, guess, formatted_guess, index=0):
+    """Returns letter from the guess when it does not match any of the
+    letters in the correct word.
+    """
     formatted_guess[guess.index(letter, index)] = f"-{letter}-"
 
 
 def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
+    """Returns letter from the guess when it matches a letter in the correct
+    word. For use where the letter in question only occurs once in the guess.
+    """
     if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter)] = letter.upper()
     elif word.index(letter, index_1) != guess.index(letter, index_2):
@@ -58,6 +71,8 @@ def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
 
 
 def multi_letter(letter, word, guess, formatted_guess, index_1, index_2):
+    """Properly handles repeat letters in the guess.
+    """
     if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter, index_2)] = letter.upper()
         index_2 = word.index(letter) + 1
@@ -78,9 +93,9 @@ def main():
 def game_loop(word_list):
     while True:
         formatted_guess = []
-        num_guesses = 0
         print(intro_message)
         word_to_guess = pick_random_word(word_list)
+        num_guesses = 0
         while num_guesses < 6:
             # print(word_to_guess)
             correct_letters = 0
@@ -97,11 +112,12 @@ def game_loop(word_list):
                 formatted_guess = ["", "", "", "", ""]
                 guess = list(guess.lower())
                 starting_index_word = 0  # To handle repeat letters.
-                starting_index_guess = 0
-                times_recurred = 0
+                starting_index_guess = 0  # To handle repeat letters.
+                times_recurred = 0  # To handle multiple repeat letters.
                 for letter in guess:
-                    letter_count = word_to_guess.count(letter)
-                    if letter_count == 0:
+                    # Checks how many times the letter occurs in the word.
+                    right_letter_count = word_to_guess.count(letter)
+                    if right_letter_count == 0:
                         if guess.count(letter) == 1:
                             wrong_letter(letter, guess, formatted_guess)
                         elif guess.count(letter) > 1:
@@ -109,21 +125,43 @@ def game_loop(word_list):
                             if times_recurred == 1:
                                 wrong_letter(letter, guess, formatted_guess)
                             elif times_recurred > 1:
+                                # This ensures multiple letters are printed in 
+                                # the right place within `formatted_guess`.
                                 index_nudge = guess.index(letter) + 1
-                                wrong_letter(letter, guess, formatted_guess, index=index_nudge)
-                    elif letter_count == 1:
-                        if guess.count(letter) == letter_count:
-                            right_letter(letter, word_to_guess, guess, formatted_guess)
-                        elif guess.count(letter) > letter_count:
+                                wrong_letter(
+                                    letter,
+                                    guess,
+                                    formatted_guess,
+                                    index=index_nudge
+                                )
+                    elif right_letter_count == 1:
+                        if guess.count(letter) == right_letter_count:
+                            right_letter(
+                                letter,
+                                word_to_guess,
+                                guess,
+                                formatted_guess
+                            )
+                        elif guess.count(letter) > right_letter_count:
                             times_recurred += 1
                             if times_recurred == 1:
-                                right_letter(letter, word_to_guess, guess, formatted_guess)
+                                right_letter(
+                                    letter,
+                                    word_to_guess,
+                                    guess,
+                                    formatted_guess
+                                )
                             elif times_recurred > 1:
                                 index_nudge = guess.index(letter) + 1
-                                wrong_letter(letter, guess, formatted_guess, index=index_nudge)
-                    elif letter_count > 1:
-                        if guess.count(letter) < letter_count:
-                            for i in range(letter_count):
+                                wrong_letter(
+                                    letter,
+                                    guess,
+                                    formatted_guess,
+                                    index=index_nudge
+                                )
+                    elif right_letter_count > 1:
+                        if guess.count(letter) < right_letter_count:
+                            for i in range(right_letter_count):
                                 try:
                                     multi_letter(
                                         letter,
@@ -135,7 +173,7 @@ def game_loop(word_list):
                                     )
                                 except ValueError:
                                     pass
-                        elif guess.count(letter) >= letter_count:
+                        elif guess.count(letter) >= right_letter_count:
                             multi_letter(
                                 letter,
                                 word_to_guess,
@@ -144,7 +182,7 @@ def game_loop(word_list):
                                 index_1=starting_index_word,
                                 index_2=starting_index_guess
                             )
-                            if guess.count(letter) > letter_count:
+                            if guess.count(letter) > right_letter_count:
                                 times_recurred += 1
                             if times_recurred > 1:
                                 index_nudge = guess.index(letter) + 1
