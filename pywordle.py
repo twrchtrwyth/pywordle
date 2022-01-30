@@ -24,7 +24,7 @@ github.com/powerlanguage
 """
 
 def load_dictionary():
-    """Opens the dictionary file used for the game.
+    """Loads the dictionary file used for the game.
     """
     with open("words_dictionary.json") as f:
         word_dictionary = json.load(f)
@@ -46,7 +46,8 @@ def create_word_list(word_dictionary):
 
 
 def pick_random_word(word_list):
-    """Picks a random word from the list of 5-letter words.
+    """Picks a random word from the list of 5-letter words. This forms the
+    word the player has to guess.
     """
     random_index = random.randint(0, len(word_list) - 1)
     word_to_guess = word_list[random_index]
@@ -54,15 +55,16 @@ def pick_random_word(word_list):
 
 
 def wrong_letter(letter, guess, formatted_guess, index=0):
-    """Returns letter from the guess when it does not match any of the
-    letters in the correct word.
+    """Puts letter from the guess into the proper location in the formatted
+    guess, when the letter does not match any letters in the correct word.
     """
     formatted_guess[guess.index(letter, index)] = f"-{letter}-"
 
 
 def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
-    """Returns letter from the guess when it matches a letter in the correct
-    word. For use where the letter in question only occurs once in the guess.
+    """Puts letter from the guess into the proper location in the formatted
+    guess, if it matches a letter in the correct word. Used where the letter
+    in question only occurs once in the guess.
     """
     if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter)] = letter.upper()
@@ -73,33 +75,35 @@ def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
 def multi_letter(letter, word, guess, formatted_guess, index_1, index_2):
     """Properly handles repeat letters in the guess.
     """
+    # Pretty sure this is broken.
     if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter, index_2)] = letter.upper()
         index_2 = word.index(letter) + 1
-        if guess.index(letter) < 4:
-            index_2 = guess.index(letter) + 1
     elif word.index(letter, index_1) != guess.index(letter, index_2):
         formatted_guess[guess.index(letter, index_2)] = letter.lower()
         index_1 = word.index(letter) + 1
-        if guess.index(letter) < 4:
-            index_2 = guess.index(letter) + 1
-
+    if guess.index(letter) < 4:
+        index_2 = guess.index(letter) + 1
 
 def main():
+    """Loads the dictionary, pulls all 5-letter words and then begins the
+    game loop.
+    """
     dictionary = load_dictionary()
     word_list = create_word_list(dictionary)
     game_loop(word_list)
 
 def game_loop(word_list):
     while True:
-        formatted_guess = []
         print(intro_message)
         word_to_guess = pick_random_word(word_list)
+        formatted_guess = []
         num_guesses = 0
         while num_guesses < 6:
-            # print(word_to_guess)
+            # print(word_to_guess)  # For debugging.
             correct_letters = 0
             guess = input("\nGuess a 5-letter word: ")
+            # Enter `q` to quit.
             if guess.lower() == "q":
                 break
             elif len(guess) != 5:
@@ -125,7 +129,7 @@ def game_loop(word_list):
                             if times_recurred == 1:
                                 wrong_letter(letter, guess, formatted_guess)
                             elif times_recurred > 1:
-                                # This ensures multiple letters are printed in 
+                                # This ensures multiple letters are printed in
                                 # the right place within `formatted_guess`.
                                 index_nudge = guess.index(letter) + 1
                                 wrong_letter(
