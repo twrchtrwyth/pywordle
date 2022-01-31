@@ -72,18 +72,13 @@ def right_letter(letter, word, guess, formatted_guess, index_1=0, index_2=0):
         formatted_guess[guess.index(letter)] = letter.lower()
 
 
-def multi_letter(letter, word, guess, formatted_guess, index_1, index_2):
+def multi_letter_guess(letter, word, guess, formatted_guess, index_1, index_2):
     """Properly handles repeat letters in the guess.
     """
-    # Pretty sure this is broken.
     if word.index(letter, index_1) == guess.index(letter, index_2):
         formatted_guess[guess.index(letter, index_2)] = letter.upper()
-        index_2 = word.index(letter) + 1
     elif word.index(letter, index_1) != guess.index(letter, index_2):
         formatted_guess[guess.index(letter, index_2)] = letter.lower()
-        index_1 = word.index(letter) + 1
-    if guess.index(letter) < 4:
-        index_2 = guess.index(letter) + 1
 
 def main():
     """Loads the dictionary, pulls all 5-letter words and then begins the
@@ -91,16 +86,13 @@ def main():
     """
     dictionary = load_dictionary()
     word_list = create_word_list(dictionary)
-    game_loop(word_list)
 
-def game_loop(word_list):
     while True:
         print(intro_message)
         word_to_guess = pick_random_word(word_list)
         formatted_guess = []
         num_guesses = 0
         while num_guesses < 6:
-            # print(word_to_guess)  # For debugging.
             correct_letters = 0
             guess = input("\nGuess a 5-letter word: ")
             # Enter `q` to quit.
@@ -167,7 +159,7 @@ def game_loop(word_list):
                         if guess.count(letter) < right_letter_count:
                             for i in range(right_letter_count):
                                 try:
-                                    multi_letter(
+                                    multi_letter_guess(
                                         letter,
                                         word_to_guess,
                                         guess,
@@ -175,10 +167,14 @@ def game_loop(word_list):
                                         index_1=starting_index_word,
                                         index_2=starting_index_guess
                                     )
+                                    starting_index_word = word_to_guess.index(letter, starting_index_word) + 1
+                                    if guess.index(letter) < 4:
+                                        starting_index_guess = guess.index(letter, starting_index_guess) + 1
                                 except ValueError:
+                                    # This avoids index error.
                                     pass
                         elif guess.count(letter) >= right_letter_count:
-                            multi_letter(
+                            multi_letter_guess(
                                 letter,
                                 word_to_guess,
                                 guess,
@@ -186,6 +182,10 @@ def game_loop(word_list):
                                 index_1=starting_index_word,
                                 index_2=starting_index_guess
                             )
+                            starting_index_word = word_to_guess.index(letter, starting_index_word) + 1
+                            if guess.index(letter) < 4:
+                                print(starting_index_guess)
+                                starting_index_guess = guess.index(letter, starting_index_guess) + 1
                             if guess.count(letter) > right_letter_count:
                                 times_recurred += 1
                             if times_recurred > 1:
@@ -199,7 +199,7 @@ def game_loop(word_list):
                     if letter.isupper():
                         correct_letters += 1
             if correct_letters == 5:
-                print("Congratulations!")
+                print("\nCongratulations!")
                 break
         if correct_letters != 5:
             print(f"\nThe correct answer was: {word_to_guess.title()}")
