@@ -2,8 +2,6 @@ import random
 import json
 
 
-# TODO: Doesn't properly handle more than one repeat letter in guess.
-
 intro_message = """
 ###########################################################
 Welcome to Wordle, Python-style!
