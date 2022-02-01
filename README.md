@@ -1,6 +1,6 @@
 # PYTHON WORDLE
 
-Josh Wardle's *Wordle* written in Python. Runs in the command line. The code is horrifically written, overcomplicated to the point of illegibility, and about as far from *pythonic* as it's possible to get. (Honestly, just save yourself the pain of looking at it.) But it works. Perhaps I'll refactor it one day...
+Josh Wardle's *Wordle* written in Python. Runs in the command line. Definitely contains far too many if/elif blocks. Perhaps I'll refactor it one day...
 
 The dictionary file used contains come very interesting 5-letter words... Vimpa, anyone?
 
